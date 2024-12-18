@@ -1,0 +1,57 @@
+<Window x:Class="lab6.CreateModuleView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Создать модуль" Height="400" Width="600">
+    <Window.Resources>
+        <!-- Стиль для TextBox с watermark/placeholder -->
+        <Style x:Key="WatermarkTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Foreground" Value="Black"/>
+            <!-- Используем свойство Tag для хранения placeholder-текста -->
+            <Setter Property="Tag" Value=""/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <TextBox x:Name="TextBox" 
+                                     Text="{TemplateBinding Text}" 
+                                     Foreground="{TemplateBinding Foreground}" 
+                                     Background="{TemplateBinding Background}"/>
+                            <TextBlock x:Name="Watermark" 
+                                       Text="{TemplateBinding Tag}" 
+                                       Foreground="Gray" 
+                                       Margin="5,0,0,0" 
+                                       IsHitTestVisible="False" 
+                                       Visibility="Hidden"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter TargetName="Watermark" Property="Visibility" Value="Hidden"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <StackPanel Margin="10">
+        <!-- Вместо PlaceholderText используем Tag -->
+        <TextBox Text="{Binding CodeName}" Tag="Кодовое название" Style="{StaticResource WatermarkTextBoxStyle}"/>
+        <TextBox Text="{Binding Title}" Tag="Название" Style="{StaticResource WatermarkTextBoxStyle}"/>
+        <DatePicker SelectedDate="{Binding DueDate}"/>
+
+        <TextBlock Text="Выбор разработчиков:"/>
+        <ListBox ItemsSource="{Binding Developers}" SelectionMode="Multiple" DisplayMemberPath="FullName"/>
+
+        <TextBlock Text="Выбор согласовантов:"/>
+        <ListBox ItemsSource="{Binding Approvers}" SelectionMode="Multiple" DisplayMemberPath="FullName"/>
+
+        <TextBlock Text="Должность:"/>
+        <ComboBox ItemsSource="{Binding Positions}" SelectedItem="{Binding SelectedPosition}" DisplayMemberPath="Name"/>
+
+        <Button Content="Сохранить" Command="{Binding SaveCommand}"/>
+    </StackPanel>
+</Window>

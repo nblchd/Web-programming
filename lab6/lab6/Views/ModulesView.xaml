@@ -1,0 +1,65 @@
+<UserControl x:Class="lab6.ModulesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:lab6.Models"
+             xmlns:services="clr-namespace:lab6.Services">
+    <UserControl.Resources>
+        <!-- Стиль для TextBox с placeholder (watermark) -->
+        <Style x:Key="WatermarkTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Tag" Value=""/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <TextBox x:Name="TextBox" 
+                                     Text="{TemplateBinding Text}" 
+                                     Foreground="{TemplateBinding Foreground}" 
+                                     Background="{TemplateBinding Background}"/>
+                            <TextBlock x:Name="Watermark" 
+                                       Text="{TemplateBinding Tag}" 
+                                       Foreground="Gray" 
+                                       Margin="5,0,0,0" 
+                                       IsHitTestVisible="False" 
+                                       Visibility="Hidden"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter TargetName="Watermark" Property="Visibility" Value="Hidden"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <services:NullConverter x:Key="NullConverter"/>
+    </UserControl.Resources>
+
+    <StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <!-- Вместо PlaceholderText используем Tag и Style -->
+            <TextBox Width="200" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Tag="Поиск..." Style="{StaticResource WatermarkTextBoxStyle}"/>
+            <ComboBox Width="150" SelectedItem="{Binding FilterStatus}">
+                <ComboBoxItem Content="Все" IsSelected="{Binding FilterStatus,Converter={StaticResource NullConverter}}"/>
+                <ComboBoxItem Content="Новый" Tag="{x:Static local:ModuleStatus.Новый}"/>
+                <ComboBoxItem Content="Черновик" Tag="{x:Static local:ModuleStatus.Черновик}"/>
+                <ComboBoxItem Content="На согласовании" Tag="{x:Static local:ModuleStatus.НаСогласовании}"/>
+                <ComboBoxItem Content="Принят в работу" Tag="{x:Static local:ModuleStatus.ПринятВРаботу}"/>
+                <ComboBoxItem Content="Архив" Tag="{x:Static local:ModuleStatus.Архив}"/>
+            </ComboBox>
+            <Button Command="{Binding CreateModuleCommand}" Content="Создать задание"/>
+        </StackPanel>
+        <ListBox ItemsSource="{Binding Modules}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="{Binding Status, Converter={StaticResource ModuleStatusToColorConverter}}">
+                        <TextBlock Text="{Binding Title}"/>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </StackPanel>
+</UserControl>

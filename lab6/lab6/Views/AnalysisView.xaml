@@ -1,0 +1,9 @@
+<UserControl x:Class="lab6.AnalysisView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel>
+        <ComboBox ItemsSource="{Binding Departments}" SelectedItem="{Binding FilterDept}" DisplayMemberPath="Name" Width="200"/>
+        <ComboBox ItemsSource="{Binding Positions}" SelectedItem="{Binding FilterPos}" DisplayMemberPath="Name" Width="200"/>
+        <DataGrid ItemsSource="{Binding ReportData}"/>
+    </StackPanel>
+</UserControl>
